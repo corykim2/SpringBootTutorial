@@ -1,0 +1,21 @@
+# 서버 포트 설정
+server:
+  port: 8082
+
+# database 연동 설정
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/머시기머시기
+    username: USER-NAME
+    password: YOUR-SECRET-PASSWORD
+  thymeleaf:
+    cache: false #html 템플릿을 매번 다시 읽어오게 함 -> 나중에 운영시에는 true로 바꿔야 한다네
+
+  # spring data jpa 설정
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
