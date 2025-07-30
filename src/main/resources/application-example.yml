@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/머시기머시기
+    url: jdbc:mariadb://서버아이피:3306/데이터베이스명
     username: USER-NAME
     password: YOUR-SECRET-PASSWORD
   thymeleaf:
@@ -18,4 +18,4 @@ spring:
     open-in-view: false
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: update #처음 생성할 떄만 create로 해주면 댐
