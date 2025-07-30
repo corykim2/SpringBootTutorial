@@ -1,5 +1,6 @@
 package com.example.SpringBootBoard.dto;
 
+import com.example.SpringBootBoard.entity.BoardEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,7 +22,21 @@ public class BoardDTO {
     private int boardHits; //조회수
     private LocalDateTime boardCreatedTime;
     private LocalDateTime boardUpdatedTime;
+
+    public static BoardDTO toBoardDTO(BoardEntity boardEntity){
+        BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setId(boardEntity.getId());
+        boardDTO.setBoardWriter(boardEntity.getBoardWriter());
+        boardDTO.setBoardPass(boardEntity.getBoardPass());
+        boardDTO.setBoardTitle(boardEntity.getBoardTitle());
+        boardDTO.setBoardContents(boardEntity.getBoardContents());
+        boardDTO.setBoardHits(boardEntity.getBoardHits());
+        boardDTO.setBoardCreatedTime(boardEntity.getCreatedTime());
+        boardDTO.setBoardUpdatedTime(boardEntity.getUpdatedTime());
+        return boardDTO;
+    }
 }
+
 
 //롬복을 쓰지 않았으면 아래 코드를 입력해야지 동일한 효과를 볼 수 있음
 //참고로 모든 어노테이션이 롬복이랑 관련이 있는 건 아님. 스프링이 제공하는 어노테이션도 많음 ex) @Controller같은 거

@@ -4,10 +4,13 @@ import com.example.SpringBootBoard.dto.BoardDTO;
 import com.example.SpringBootBoard.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor // final로 선언된 필드만을 파라미터로 받는 생성자를 자동으로 만들어주는 롬복 어노테이션
@@ -25,5 +28,16 @@ public class BoardController {
     public String save(@ModelAttribute BoardDTO boardDTO) { //여기서 @ModelAttribute 없이 구현하려면 객체 만들고 @RequestParam로 받아서 하나씩 세터로 넣어줘여함
         boardService.save(boardDTO);
         return "index";
+    }
+
+    @GetMapping("/")
+    public String findAll(Model model) { //컨트롤러에서 데이터를 model에 담아서 View로 넘겨주면, HTML에서 그 데이터를 사용 가능
+        List<BoardDTO> boardDTOList = boardService.findAll();
+        model.addAttribute("boardList", boardDTOList); //Thymeleaf(html 페이지에 for문 걸고 이런거) 쓰니까 가능한 방식임.
+        //그거 안쓰면 json을 ajax로 받아서 쓰는 rest방식을 사용해야 함.
+        //타임리프는 뷰 템플릿 엔진이고, model을 ViewResolver가 각 뷰 엔진에 맞는 형태로 바꿔서 보내줌. 그 엔진은 의존성에서 파악
+        //참고로 React는 js로 사용자의 화면에 뭘 그리는 방식이라서 json 형식으로 api를 쏴주면 그걸 프론트가 처리하는 거임.
+        //타임리프는 백엔드 하는 애가 좀 프론트까지 대충 한번에 하기 좋은 그런 방식임.
+        return "list";
     }
 }
