@@ -5,10 +5,7 @@ import com.example.SpringBootBoard.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,5 +36,15 @@ public class BoardController {
         //참고로 React는 js로 사용자의 화면에 뭘 그리는 방식이라서 json 형식으로 api를 쏴주면 그걸 프론트가 처리하는 거임.
         //타임리프는 백엔드 하는 애가 좀 프론트까지 대충 한번에 하기 좋은 그런 방식임.
         return "list";
+    }
+
+    //게시글 상세조회는 2가지 작업이 필요. 해당 게시물의 조회수를 하나 올리고, 게시글 데이터를 가져와서 출력
+    @GetMapping("/{id}")
+    public String findById(@PathVariable Long id, Model model){ // @PathVariable은 URL 경로에 있는 값을 메서드의 매개변수로 바인딩, 변수명과 같으면 자동 아니면
+        //@PathVariable("teamId") Long tId,이런 식으로도 가능함
+        boardService.updateHits(id);
+        BoardDTO boardDTO = boardService.findById(id);
+        model.addAttribute("board", boardDTO);
+        return "detail";
     }
 }

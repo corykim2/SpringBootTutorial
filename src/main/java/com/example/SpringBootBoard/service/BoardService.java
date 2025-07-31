@@ -6,9 +6,11 @@ import com.example.SpringBootBoard.entity.BoardEntity;
 import com.example.SpringBootBoard.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 //컨트롤러, 리포지토리, 서비스는 요청에 대한 응답을 위한 계층임.
 //controller 요청 받음 -> service 호출(DTO > Entity 변환, 비즈니스 로직 처리) -> service가 repository 호출해서 db에 저장
@@ -31,5 +33,23 @@ public class BoardService {
             boardDTOList.add(BoardDTO.toBoardDTO(boardEntity));
         }
         return boardDTOList;
+    }
+    @Transactional //이건 영속성 머시기 하는데 결국 JPA가 제공하는 게 아닌 우리가 튜닝해서 쓰는 함수니까 트랜잭션에 담아서 안정성을 챙기게 하는 거임
+    //애초에 여기있는 다른 함수도 내부적으로 @Transactional가 붙음.
+    public void updateHits(Long id) {
+        boardRepository.updateHits(id);
+    }
+
+    public BoardDTO findById(Long id) {
+        Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(id); //findById는 무조건 Optional 객체를 반환하기에 Optional을 쓰는 게 필수
+        // Optional는 값이 있을 수도 없을 수도 있는 객체를 감싸는 wrapper임 -> 안전한 null 체크
+        if(optionalBoardEntity.isPresent()){
+            BoardEntity boardEntity = optionalBoardEntity.get();
+            BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity);
+            return boardDTO;
+        }
+        else {
+            return null;
+        }
     }
 }
