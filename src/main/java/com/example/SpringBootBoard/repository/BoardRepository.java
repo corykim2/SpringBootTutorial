@@ -19,6 +19,10 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> { //�
     //엔티티를 다 메타데이터로 관리하는데 그걸 JPA가 보고서 알아서 매핑해서 쿼리를 짜는 거임.
     @Modifying //수정일 경우에는 이게 붙어야됨. @Query만 있으면 조회로 인식
     void updateHits(@Param("id") Long id);
-
     //아니면 @Transactional을 이용해서 엔티티 객체의 값을 변경하고 마지막에 JPA에서 자동으로 변경을 감지해서 업데이트를 날리게 하는 방법도 있음
+    //이게 findById()를 통해서 객체를 영속상태로 만들고, 그 객체의 값을 수정해서 업뎃하는 방법.
+
+    @Modifying
+    @Query(value = "update BoardEntity b set b.boardTitle = :title, b.boardContents = :contents where b.id = :id")
+    int update(@Param("id") Long id, @Param("title") String title, @Param("contents") String contents);
 }

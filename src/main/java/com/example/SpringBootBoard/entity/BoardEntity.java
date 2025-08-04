@@ -1,6 +1,7 @@
 package com.example.SpringBootBoard.entity;
 
 import com.example.SpringBootBoard.dto.BoardDTO;
+import com.example.SpringBootBoard.dto.UpdateDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

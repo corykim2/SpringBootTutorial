@@ -1,6 +1,7 @@
 package com.example.SpringBootBoard.controller;
 
 import com.example.SpringBootBoard.dto.BoardDTO;
+import com.example.SpringBootBoard.dto.UpdateDTO;
 import com.example.SpringBootBoard.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -42,9 +43,29 @@ public class BoardController {
     @GetMapping("/{id}")
     public String findById(@PathVariable Long id, Model model){ // @PathVariable은 URL 경로에 있는 값을 메서드의 매개변수로 바인딩, 변수명과 같으면 자동 아니면
         //@PathVariable("teamId") Long tId,이런 식으로도 가능함
+        //참고로 Model은 인터페이스임
         boardService.updateHits(id);
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("board", boardDTO);
         return "detail";
+    }
+
+    @GetMapping("/update/{id}")
+    public String updateForm(@PathVariable Long id, Model model){
+        BoardDTO boardDTO = boardService.findById(id);
+        model.addAttribute("boardUpdate", boardDTO);
+        return "update";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute UpdateDTO updateDTO){
+        int updateCheck = boardService.update(updateDTO);
+        if(updateCheck==1) {
+            return "redirect:/board/" + updateDTO.getId();
+        }
+        else{
+            return null;
+            //이건 어케 처리할지 생각이 안나서 비워둠.
+        }
     }
 }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>update</title>
+</head>
+<body>
+<form action="/board/update" method="post" name="updateForm">
+  <input type="hidden" name="id" th:value="${boardUpdate.id}">
+  pass: <input type="text" name="boardPass" id="boardPass"> <br>
+  title: <input type="text" name="boardTitle" th:value="${boardUpdate.boardTitle}"> <br>
+  contents: <textarea name="boardContents" cols="30" rows="10" th:text="${boardUpdate.boardContents}"></textarea> <br>
+  <input type="button" value="글수정" onclick="boardUpdate()">
+  <!- 원래 이런식으로 조회수를 수정할 수 있게 만들지는 않는다고 함. 백에서 처리하는 게 맞음 ->
+</form>
+<script th:inline="javascript">
+  const boardUpdate = () => {
+    const inputPass = document.getElementById("boardPass").value;
+    document.updateForm.submit();
+  }
+</script>
+</body>

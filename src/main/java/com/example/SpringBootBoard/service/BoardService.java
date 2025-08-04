@@ -1,12 +1,13 @@
 package com.example.SpringBootBoard.service;
 
 import com.example.SpringBootBoard.dto.BoardDTO;
-import com.example.SpringBootBoard.entity.BaseEntity;
+import com.example.SpringBootBoard.dto.UpdateDTO;
 import com.example.SpringBootBoard.entity.BoardEntity;
 import com.example.SpringBootBoard.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class BoardService {
     public BoardDTO findById(Long id) {
         Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(id); //findById는 무조건 Optional 객체를 반환하기에 Optional을 쓰는 게 필수
         // Optional는 값이 있을 수도 없을 수도 있는 객체를 감싸는 wrapper임 -> 안전한 null 체크
+        //findById는 결국 이 구조를 써야한다는 뜻
         if(optionalBoardEntity.isPresent()){
             BoardEntity boardEntity = optionalBoardEntity.get();
             BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity);
@@ -51,5 +53,15 @@ public class BoardService {
         else {
             return null;
         }
+    }
+
+    @Transactional
+    public int update(UpdateDTO updateDTO){
+        //jpa repositiry에서는 따로 update를 제공하지는 않고 save에 id 값이 있냐 없냐를 따져서 update인지 판별함.
+        Long id = updateDTO.getId();
+        String title = updateDTO.getBoardTitle();
+        String contents = updateDTO.getBoardContents();
+        int updateCheck = boardRepository.update(id,title,contents);
+        return updateCheck;
     }
 }
