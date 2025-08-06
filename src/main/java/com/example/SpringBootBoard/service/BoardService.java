@@ -64,4 +64,8 @@ public class BoardService {
         int updateCheck = boardRepository.update(id,title,contents);
         return updateCheck;
     }
+
+    public void delete(Long id) {
+        boardRepository.deleteById(id);
+    }
 }
