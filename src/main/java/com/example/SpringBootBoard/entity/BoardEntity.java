@@ -35,6 +35,8 @@ public class BoardEntity extends BaseEntity {
     
     //시간에 대한 건 따로 구분해서 클래스를 만듦(상속해서 사용)
 
+
+
     public static BoardEntity toSaveEntity(BoardDTO boardDTO){ //엔티티로 바꿔주는 함수를 여기에 만듦(빌더패턴으로도 가능하다넴)
         BoardEntity boardEntity = new BoardEntity();
         boardEntity.setBoardWriter(boardDTO.getBoardWriter());

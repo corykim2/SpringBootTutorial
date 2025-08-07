@@ -5,6 +5,10 @@ import com.example.SpringBootBoard.dto.UpdateDTO;
 import com.example.SpringBootBoard.entity.BoardEntity;
 import com.example.SpringBootBoard.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -67,5 +71,20 @@ public class BoardService {
 
     public void delete(Long id) {
         boardRepository.deleteById(id);
+    }
+
+    public Page<BoardDTO> paging(Pageable pageable) {
+        int page = pageable.getPageNumber() -1; //-1은 페이지 인덱스가 0부터 시작해서 그럼
+        int pageLimit = 3; //페이지에 보여줄 글 개수
+        Page<BoardEntity> boardEntities =
+                boardRepository.findAll(PageRequest.of(page,pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+                //PageRequest.of는 pageable 객체를 생성하는 메서드임. 위에서 받아온 걸 토대로 재생성 하는 거지
+                //여기서 id는 엔티티 기준 필드이름으로 써줘야 함
+        Page<BoardDTO> boardDTOS = boardEntities.map(board -> new BoardDTO(
+                board.getId(), board.getBoardWriter(), board.getBoardTitle(), board.getBoardHits(), board.getCreatedTime()));
+        //map()은 페이지 객체에 있는 내용을 기반으로 DTO 객체를 생성해서 그 리스트를 만들어서 넘겨줌. Page 관련 매서드는 유지하게 되는 거임.
+        //때문에 DTO 클래스에 저 인자들만 받는 생성자를 만들어줄 필요가 있음.
+
+        return boardDTOS;
     }
 }

@@ -4,6 +4,10 @@ import com.example.SpringBootBoard.dto.BoardDTO;
 import com.example.SpringBootBoard.dto.UpdateDTO;
 import com.example.SpringBootBoard.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,12 +45,15 @@ public class BoardController {
 
     //게시글 상세조회는 2가지 작업이 필요. 해당 게시물의 조회수를 하나 올리고, 게시글 데이터를 가져와서 출력
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id, Model model){ // @PathVariable은 URL 경로에 있는 값을 메서드의 매개변수로 바인딩, 변수명과 같으면 자동 아니면
+    public String findById(@PathVariable Long id, Model model,
+                           @PageableDefault(page=1) Pageable pageable){
+        // @PathVariable은 URL 경로에 있는 값을 메서드의 매개변수로 바인딩, 변수명과 같으면 자동 아니면
         //@PathVariable("teamId") Long tId,이런 식으로도 가능함
         //참고로 Model은 인터페이스임
         boardService.updateHits(id);
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("board", boardDTO);
+        model.addAttribute("page", pageable.getPageNumber()); //페이지 정보를 들고가기 위한 용도
         return "detail";
     }
 
@@ -73,5 +80,25 @@ public class BoardController {
     public String delete(@PathVariable Long id){
         boardService.delete(id);
         return "redirect:/board/";
+    }
+
+    @GetMapping("/paging")
+    public String paging(@PageableDefault(page=1) Pageable pageable, Model model) {
+        //Pageable은 jpa에서 페이징 관련 파라미터(page,size,sort)를 매개변수 하나에 담아주는 인터페이스 -> pageable에 자동으로 주입됨.
+        //@PageableDefault는 그냥 디폴트 값의 지정만 수행해주는 거임.
+        Page<BoardDTO> boardList = boardService.paging(pageable);
+
+        int totalPages = boardList.getTotalPages(); // 전체 페이지 수
+        int currentPage = boardList.getNumber() + 1; //현재 페이지 넘버
+
+        int blockLimit = 5; // 페이지네이션에서 보여줄 페이지 수, 참고로 웹에서 보여지는 < 이전 6 7 [8] 9 10 다음 > 이런 걸 페이지네이션이라고 함.
+        int startPage = ((currentPage - 1) / blockLimit) * blockLimit + 1;
+        int endPage = Math.min(startPage + blockLimit - 1, totalPages);
+        //여기서는 1~5, 6~10, 11~15 이런식으로 5개씩을 묶어서 보여주도록 함. current가 항상 가운데에 있는 구조가 아님.
+
+        model.addAttribute("boardList", boardList);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "paging";
     }
 }
